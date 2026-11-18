@@ -184,19 +184,15 @@ extension BottomSheetHostingView {
   }
 
   func refreshDetentsFromLayout() {
+    // Fabric can set props on a recycled host before applying its new frame.
+    // Its detached bounds and status bar overlap cannot resolve detent heights.
+    // didMoveToWindow refreshes them on attachment.
+    guard window != nil else { return }
     resolveDetentsFromLayout()
     replayPendingIndexIfResolved()
   }
 
   private func resolveDetentsFromLayout() {
-    // While detached from a window (e.g. mid-commit, when Fabric reparents the
-    // host as ancestor view flattening changes), the status bar's overlap is not
-    // computable — its zero fallback would register as a detents change and
-    // trigger a spurious re-anchor snap that clobbers any queued snap request.
-    // Stay inert; didMoveToWindow refreshes geometry on reattach.
-    if hasLaidOut, window == nil {
-      return
-    }
     refreshContentHeightMarker()
     if !isPanning {
       activeDragRange = nil

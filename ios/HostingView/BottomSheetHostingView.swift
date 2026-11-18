@@ -149,7 +149,10 @@ public final class BottomSheetHostingView: UIView {
   var panGesture: SheetPanGestureRecognizer!
   var activeSpring: CriticalSpring?
   /// Movement is published by position callbacks while a spring is active.
-  public var isSettling: Bool { activeSpring != nil }
+  public var isSettling: Bool {
+    activeSpring != nil
+  }
+
   var activeSpringTargetIndex: Int = 0
   var activeSpringEmitsSettle = false
   var scrimPinnedFull = false
@@ -335,12 +338,7 @@ public final class BottomSheetHostingView: UIView {
 
   override public func layoutSubviews() {
     super.layoutSubviews()
-    guard bounds.width > 0, bounds.height > 0 else { return }
-    // See refreshDetentsFromLayout: without a window the status bar's overlap
-    // falls back to zero, which must not be applied to the container geometry.
-    if hasLaidOut, window == nil {
-      return
-    }
+    guard window != nil, bounds.width > 0, bounds.height > 0 else { return }
 
     scrimView.frame = bounds
     // Whether the maximum width leaves a gap depends on the host's width.
